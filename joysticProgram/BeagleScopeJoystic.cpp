@@ -49,8 +49,10 @@ unsigned int joystick_Button = 14 ;   // GPIO0_14 = ( 0 * 32 ) + 14 = 14
 
 int main(int argc, char *argv[]){
 
-   //cout << "Testing the GPIO Pins" << endl;
-   printf ("Testing the GPIO Pins\n");
+   // Start message
+   printf ("==========================================================================\n");
+   printf ("\tThe BeagleScopeJoystic STARTS NOW!!!!\n");
+   printf ("--------------------------------------------------------------------------\n");
 
    // Unexport the pins, necessary if pins are already exported
    gpio_unexport(joystick_Up    );             /*gpio_unexport(48 );*/
@@ -236,7 +238,7 @@ int main(int argc, char *argv[]){
          if (joystick_value_Button_Flag == HIGH){
             printf ("joystick_Up/Down = control Y\n");
          }
-         usleep(100000);
+         usleep(1000000);
       }
    }
 
@@ -247,6 +249,12 @@ int main(int argc, char *argv[]){
    gpio_unexport(joystick_Left  );             /*gpio_unexport(3  );*/
    gpio_unexport(joystick_Right );             /*gpio_unexport(115);*/
    gpio_unexport(joystick_Button);             /*gpio_unexport(14 );*/
+
+   // Start message
+   printf ("--------------------------------------------------------------------------\n");
+   printf ("\tThe BeagleScopeJoystic ENDS NOW!!!!\n");
+   printf ("==========================================================================\n");
+
    return 0;
 }
 
