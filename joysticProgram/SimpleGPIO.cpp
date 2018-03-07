@@ -43,25 +43,30 @@
 #include <fcntl.h>
 #include <poll.h>
 
+int systemRet = 0;
+
 /****************************************************************
  * gpio_export
  ****************************************************************/
 int gpio_export(unsigned int gpio)
 {
-	int fd, len;
-	char buf[MAX_BUF];
+   int fd, len;
+   char buf[MAX_BUF];
 
-	fd = open(SYSFS_GPIO_DIR "/export", O_WRONLY);
-	if (fd < 0) {
-		perror("gpio/export");
-		return fd;
-	}
+   fd = open(SYSFS_GPIO_DIR "/export", O_WRONLY);
+   if (fd < 0) {
+      perror("gpio/export");
+      return fd;
+   }
 
-	len = snprintf(buf, sizeof(buf), "%d", gpio);
-	write(fd, buf, len);
-	close(fd);
+   len = snprintf(buf, sizeof(buf), "%d", gpio);
+   systemRet = write(fd, buf, len);
+   if(systemRet == -1){
+      // The system method failed
+   }
+   close(fd);
 
-	return 0;
+   return 0;
 }
 
 /****************************************************************
@@ -69,19 +74,22 @@ int gpio_export(unsigned int gpio)
  ****************************************************************/
 int gpio_unexport(unsigned int gpio)
 {
-	int fd, len;
-	char buf[MAX_BUF];
+   int fd, len;
+   char buf[MAX_BUF];
 
-	fd = open(SYSFS_GPIO_DIR "/unexport", O_WRONLY);
-	if (fd < 0) {
-		perror("gpio/export");
-		return fd;
-	}
+   fd = open(SYSFS_GPIO_DIR "/unexport", O_WRONLY);
+   if (fd < 0) {
+      perror("gpio/export");
+      return fd;
+   }
 
-	len = snprintf(buf, sizeof(buf), "%d", gpio);
-	write(fd, buf, len);
-	close(fd);
-	return 0;
+   len = snprintf(buf, sizeof(buf), "%d", gpio);
+   systemRet = write(fd, buf, len);
+   if(systemRet == -1){
+      // The system method failed
+   }
+   close(fd);
+   return 0;
 }
 
 /****************************************************************
@@ -89,24 +97,31 @@ int gpio_unexport(unsigned int gpio)
  ****************************************************************/
 int gpio_set_dir(unsigned int gpio, PIN_DIRECTION out_flag)
 {
-	int fd;
-	char buf[MAX_BUF];
+   int fd;
+   char buf[MAX_BUF];
 
-	snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%d/direction", gpio);
+   snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR  "/gpio%d/direction", gpio);
 
-	fd = open(buf, O_WRONLY);
-	if (fd < 0) {
-		perror("gpio/direction");
-		return fd;
-	}
+   fd = open(buf, O_WRONLY);
+   if (fd < 0) {
+      perror("gpio/direction");
+      return fd;
+   }
 
-	if (out_flag == OUTPUT_PIN)
-		write(fd, "out", 4);
-	else
-		write(fd, "in", 3);
+   if (out_flag == OUTPUT_PIN){
+      systemRet = write(fd, "out", 4);
+      if(systemRet == -1){
+         // The system method failed
+      }
+   } else{
+      systemRet = write(fd, "in", 3);
+      if(systemRet == -1){
+         // The system method failed
+      }
+   }
 
-	close(fd);
-	return 0;
+   close(fd);
+   return 0;
 }
 
 /****************************************************************
@@ -114,24 +129,30 @@ int gpio_set_dir(unsigned int gpio, PIN_DIRECTION out_flag)
  ****************************************************************/
 int gpio_set_value(unsigned int gpio, PIN_VALUE value)
 {
-	int fd;
-	char buf[MAX_BUF];
+   int fd;
+   char buf[MAX_BUF];
 
-	snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
+   snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
 
-	fd = open(buf, O_WRONLY);
-	if (fd < 0) {
-		perror("gpio/set-value");
-		return fd;
-	}
+   fd = open(buf, O_WRONLY);
+   if (fd < 0) {
+      perror("gpio/set-value");
+      return fd;
+   }
 
-	if (value==LOW)
-		write(fd, "0", 2);
-	else
-		write(fd, "1", 2);
-
-	close(fd);
-	return 0;
+   if (value==LOW){
+      systemRet = write(fd, "0", 2);
+      if(systemRet == -1){
+         // The system method failed
+      }
+   } else{
+      systemRet = write(fd, "1", 2);
+      if(systemRet == -1){
+         // The system method failed
+      }
+   }
+   close(fd);
+   return 0;
 }
 
 /****************************************************************
@@ -139,28 +160,31 @@ int gpio_set_value(unsigned int gpio, PIN_VALUE value)
  ****************************************************************/
 int gpio_get_value(unsigned int gpio, unsigned int *value)
 {
-	int fd;
-	char buf[MAX_BUF];
-	char ch;
+   int fd;
+   char buf[MAX_BUF];
+   char ch;
 
-	snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
+   snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
 
-	fd = open(buf, O_RDONLY);
-	if (fd < 0) {
-		perror("gpio/get-value");
-		return fd;
-	}
+   fd = open(buf, O_RDONLY);
+   if (fd < 0) {
+      perror("gpio/get-value");
+      return fd;
+   }
 
-	read(fd, &ch, 1);
+   systemRet = read(fd, &ch, 1);
+   if(systemRet == -1){
+      // The system method failed
+   }
 
-	if (ch != '0') {
-		*value = 1;
-	} else {
-		*value = 0;
-	}
+   if (ch != '0') {
+      *value = 1;
+   } else {
+      *value = 0;
+   }
 
-	close(fd);
-	return 0;
+   close(fd);
+   return 0;
 }
 
 
@@ -170,20 +194,23 @@ int gpio_get_value(unsigned int gpio, unsigned int *value)
 
 int gpio_set_edge(unsigned int gpio, char *edge)
 {
-	int fd;
-	char buf[MAX_BUF];
+   int fd;
+   char buf[MAX_BUF];
 
-	snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
+   snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/edge", gpio);
 
-	fd = open(buf, O_WRONLY);
-	if (fd < 0) {
-		perror("gpio/set-edge");
-		return fd;
-	}
+   fd = open(buf, O_WRONLY);
+   if (fd < 0) {
+      perror("gpio/set-edge");
+      return fd;
+   }
 
-	write(fd, edge, strlen(edge) + 1);
-	close(fd);
-	return 0;
+   systemRet = write(fd, edge, strlen(edge) + 1);
+   if(systemRet == -1){
+      // The system method failed
+   }
+   close(fd);
+   return 0;
 }
 
 /****************************************************************
@@ -192,16 +219,16 @@ int gpio_set_edge(unsigned int gpio, char *edge)
 
 int gpio_fd_open(unsigned int gpio)
 {
-	int fd;
-	char buf[MAX_BUF];
+   int fd;
+   char buf[MAX_BUF];
 
-	snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
+   snprintf(buf, sizeof(buf), SYSFS_GPIO_DIR "/gpio%d/value", gpio);
 
-	fd = open(buf, O_RDONLY | O_NONBLOCK );
-	if (fd < 0) {
-		perror("gpio/fd_open");
-	}
-	return fd;
+   fd = open(buf, O_RDONLY | O_NONBLOCK );
+   if (fd < 0) {
+      perror("gpio/fd_open");
+   }
+   return fd;
 }
 
 /****************************************************************
@@ -210,5 +237,5 @@ int gpio_fd_open(unsigned int gpio)
 
 int gpio_fd_close(int fd)
 {
-	return close(fd);
+   return close(fd);
 }

@@ -1,8 +1,9 @@
 #!/bin/bash
 
 echo ==========================================================================
-echo "Building the Simple GPIO Example - See derekmolloy.ie"
-echo "g++ -O2 -Wall BeagleScopeJoystic.cpp -o BeagleScopeJoystic"
-echo --------------------------------------------------------------------------
-g++ -O2 -Wall BeagleScopeJoystic.cpp -o BeagleScopeJoystic
+echo "  Building BeagleScopeJoystic"
+echo "  g++ -O2 -Wall BeagleScopeJoystic.cpp -o BeagleScopeJoystic"
+echo ----------------compiling-------------------------------------------------
+g++ -O2 -Wall BeagleScopeJoystic.cpp SimpleGPIO.cpp -o BeagleScopeJoystic -Wformat-extra-args
+echo ------------------done----------------------------------------------------
 echo ==========================================================================
