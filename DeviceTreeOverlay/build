@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo ==========================================================================
+echo "Compiling the overlay from .dts to .dtbo"
+echo "sudo dtc -O dtb -o /lib/firmware/BB-BONE-REPLICAP-ATARI-0B3A.dtbo -b 0 -@ BB-BONE-REPLICAP-ATARI-0B3A.dts"
+echo --------------------------------------------------------------------------
+sudo dtc -O dtb -o /lib/firmware/BB-BONE-REPLICAP-ATARI-0B3A.dtbo -b 0 -@ BB-BONE-REPLICAP-ATARI-0B3A.dts
+echo ==========================================================================

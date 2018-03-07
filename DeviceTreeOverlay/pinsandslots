@@ -1,0 +1,10 @@
+#!/bin/bash
+
+export PINS=/sys/kernel/debug/pinctrl/44e10800.pinmux/pins
+export SLOTS=/sys/devices/platform/bone_capemgr/slots
+
+echo $PINS
+echo $SLOTS
+
+cat $PINS
+cat $SLOTS
