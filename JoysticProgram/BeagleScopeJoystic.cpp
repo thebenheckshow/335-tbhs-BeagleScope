@@ -99,12 +99,12 @@ int main(int argc, char *argv[]){
       gpio_get_value(joystick_Right , &joystick_value_Right );
       gpio_get_value(joystick_Button, &joystick_value_Button);
 
-      // Up controls Y and Z if button toggled.
+      // Up controls Y+ and Z+ if button toggled.
       if (joystick_value_Up == LOW || joystick_value_Up_Flag == HIGH) {
          if (joystick_value_Button_Flag == LOW){ // If button toggled, move the Z
             if (joystick_value_Up_Flag == LOW){
                joystick_value_Up_Flag = HIGH;
-               printf ("joystick_value_Up + Start\n");
+               printf ("joystick_value_Up + Start\tY+\n");
                systemRet = system("echo G91 > /dev/octoprint_1; echo G1 Y5 F3000 > /dev/octoprint_1;");
                if(systemRet == -1){
                   // The system method failed
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
          if (joystick_value_Button_Flag == HIGH){
             if (joystick_value_Up_Flag == LOW){
                joystick_value_Up_Flag = HIGH;
-               printf ("joystick_value_Up + Start\n");
+               printf ("joystick_value_Up + Start\tZ+\n");
                systemRet = system("echo G91 > /dev/octoprint_1; echo G1 Z5 F3000 > /dev/octoprint_1;");
                if(systemRet == -1){
                   // The system method failed
@@ -141,11 +141,12 @@ int main(int argc, char *argv[]){
          }
       }
 
+      // Down controls Y- and Z- if button toggled.
       if (joystick_value_Down == LOW || joystick_value_Down_Flag == HIGH) {
          if (joystick_value_Button_Flag == LOW){
             if (joystick_value_Down_Flag == LOW){
                joystick_value_Down_Flag = HIGH;
-               printf ("joystick_value_Down + Start\n");
+               printf ("joystick_value_Down + Start\tY-\n");
                systemRet = system("echo G91 > /dev/octoprint_1; echo G1 Y-5 F3000 > /dev/octoprint_1; ");
                if(systemRet == -1){
                   // The system method failed
@@ -162,65 +163,107 @@ int main(int argc, char *argv[]){
             }
          }
          if (joystick_value_Button_Flag == HIGH){
-            if (joystick_value_Up_Flag == LOW){
-               joystick_value_Up_Flag = HIGH;
-               printf ("joystick_value_Up + Start\n");
+            if (joystick_value_Down == LOW){
+               joystick_value_Down_Flag = HIGH;
+               printf ("joystick_value_Down + Start\tZ-\n");
                systemRet = system("echo G91 > /dev/octoprint_1; echo G1 Z-5 F3000 > /dev/octoprint_1;");
                if(systemRet == -1){
                   // The system method failed
                }
                usleep(100000);
             } else {
-               joystick_value_Up_Flag = LOW;
-               printf ("joystick_value_Up + Stop\n");
+               joystick_value_Down_Flag = LOW;
+               printf ("joystick_value_Down + Stop\n");
                usleep(100000);
             }
-            if (joystick_value_Up == LOW && joystick_value_Up_Flag == HIGH) {
-               printf ("joystick_value_Up + Repeat\n");
+            if (joystick_value_Down == LOW && joystick_value_Down_Flag == HIGH) {
+               printf ("joystick_value_Down + Repeat\n");
                usleep(100000);
             }
          }
       }
 
-      // Left controls X-
+      // Left controls X- and E- if button toggled.
       if (joystick_value_Left == LOW || joystick_value_Left_Flag == HIGH) {
-         if (joystick_value_Left_Flag == LOW){
-            joystick_value_Left_Flag = HIGH;
-            printf ("joystick_value_Left - Start\n");
-            systemRet = system("echo G91 > /dev/octoprint_1; echo G1 X-5 F3000 > /dev/octoprint_1;");
-            if(systemRet == -1){
-               // The system method failed
+         if (joystick_value_Button_Flag == LOW){
+            if (joystick_value_Left_Flag == LOW){
+               joystick_value_Left_Flag = HIGH;
+               printf ("joystick_value_Left + Start\tX-\n");
+               systemRet = system("echo G91 > /dev/octoprint_1; echo G1 X-5 F3000 > /dev/octoprint_1; ");
+               if(systemRet == -1){
+                  // The system method failed
+               }
+               usleep(100000);
+            } else {
+               joystick_value_Left_Flag = LOW;
+               printf ("joystick_value_Left - Stop\n");
+               usleep(100000);
             }
-            usleep(100000);
-         } else {
-            joystick_value_Left_Flag = LOW;
-            printf ("joystick_value_Left - Stop\n");
-            usleep(100000);
+            if (joystick_value_Left == LOW && joystick_value_Left_Flag == HIGH) {
+               printf ("joystick_value_Left - Repeat\n");
+               usleep(100000);
+            }
          }
-         if (joystick_value_Left == LOW && joystick_value_Left_Flag == HIGH) {
-            printf ("joystick_value_Left - Repeat\n");
-            usleep(100000);
+         if (joystick_value_Button_Flag == HIGH){
+            if (joystick_value_Left_Flag == LOW){
+               joystick_value_Left_Flag = HIGH;
+               printf ("joystick_value_Left + Start\tE-\n");
+               systemRet = system("echo G91 > /dev/octoprint_1; echo G1 E-5 F3000 > /dev/octoprint_1;");
+               if(systemRet == -1){
+                  // The system method failed
+               }
+               usleep(100000);
+            } else {
+               joystick_value_Left_Flag = LOW;
+               printf ("joystick_value_Left + Stop\n");
+               usleep(100000);
+            }
+            if (joystick_value_Left == LOW && joystick_value_Left_Flag == HIGH) {
+               printf ("joystick_value_Left + Repeat\n");
+               usleep(100000);
+            }
          }
       }
 
-      // Right controls X+
+      // Left controls X+ and E+ if button toggled.
       if (joystick_value_Right == LOW || joystick_value_Right_Flag == HIGH) {
-         if (joystick_value_Right_Flag == LOW){
-            joystick_value_Right_Flag = HIGH;
-            printf ("joystick_value_Right + Start\n");
-            systemRet = system("echo G91 > /dev/octoprint_1; echo G1 X5 F3000 > /dev/octoprint_1;");
-            if(systemRet == -1){
-               // The system method failed
+         if (joystick_value_Button_Flag == LOW){
+            if (joystick_value_Right_Flag == LOW){
+               joystick_value_Right_Flag = HIGH;
+               printf ("joystick_value_Right + Start\tX+\n");
+               systemRet = system("echo G91 > /dev/octoprint_1; echo G1 X5 F3000 > /dev/octoprint_1; ");
+               if(systemRet == -1){
+                  // The system method failed
+               }
+               usleep(100000);
+            } else {
+               joystick_value_Right_Flag = LOW;
+               printf ("joystick_value_Right - Stop\n");
+               usleep(100000);
             }
-            usleep(100000);
-         } else {
-            joystick_value_Right_Flag = LOW;
-            printf ("joystick_value_Right + Stop\n");
-            usleep(100000);
+            if (joystick_value_Right == LOW && joystick_value_Right_Flag == HIGH) {
+               printf ("joystick_value_Right - Repeat\n");
+               usleep(100000);
+            }
          }
-         if (joystick_value_Right == LOW && joystick_value_Right_Flag == HIGH) {
-            printf ("joystick_value_Right + Repeat\n");
-            usleep(100000);
+         if (joystick_value_Button_Flag == HIGH){
+            if (joystick_value_Right_Flag == LOW){
+               joystick_value_Right_Flag = HIGH;
+               printf ("joystick_value_Right + Start\tE+\n");
+               systemRet = system("echo G91 > /dev/octoprint_1; echo G1 E5 F3000 > /dev/octoprint_1;");
+               if(systemRet == -1){
+                  // The system method failed
+               }
+               usleep(100000);
+            } else {
+               joystick_value_Right_Flag = LOW;
+               printf ("joystick_value_Right + Stop\n");
+               usleep(100000);
+            }
+            if (joystick_value_Right == LOW && joystick_value_Right_Flag == HIGH) {
+               printf ("joystick_value_Right + Repeat\n");
+               usleep(100000);
+            }
          }
       }
 
