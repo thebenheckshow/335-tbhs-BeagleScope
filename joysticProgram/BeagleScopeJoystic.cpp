@@ -243,7 +243,8 @@ int main(int argc, char *argv[]){
    }
 
    // The while loop never breaks, but to properly exit the program this needs to happen
-   printf ("Finished Testing the GPIO Pins");
+   printf ("--------------------------------------------------------------------------\n");
+   printf ("\tTime to unexport the GPIO Pins\n");
    gpio_unexport(joystick_Up    );             /*gpio_unexport(48 );*/
    gpio_unexport(joystick_Down  );             /*gpio_unexport(5  );*/
    gpio_unexport(joystick_Left  );             /*gpio_unexport(3  );*/
